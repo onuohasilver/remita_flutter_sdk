@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 ///TODO: Map httpCalls to Singleton Class
 class GenericHttp {
   ///Generic Post function to make Post API calls
-  static Future<Map<dynamic, dynamic>> postToDB(
+  static Future<Map> postToDB(
       {required String api,
       required Map<String, dynamic> body,
       Map<String, String>? headers}) async {
@@ -19,7 +19,7 @@ class GenericHttp {
   }
 
   ///Generic Get function to make Get API calls
-  static Future<String> getFromDB(
+  static Future<Map> getFromDB(
       {required String api,
       required String apiKey,
       required Map<String, String>? headers}) async {
@@ -28,7 +28,7 @@ class GenericHttp {
 
     // return jsonDecode(response.body);
 
-    return response.body;
+    return jsonDecode(response.body);
   }
 
   ///Generic Put function to make Put API calls
