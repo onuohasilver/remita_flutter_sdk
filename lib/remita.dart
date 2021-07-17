@@ -67,8 +67,9 @@ class RemitaHandler {
       {String? rrr, String? orderID}) async {
     assert((orderID != null) | (rrr != null));
     List<String> hashableString = [rrr ?? orderID!, apiKey, merchantID];
-    String api =
-        'https://www.remitademo.net/remita/ecomm/$merchantID/$rrr/${returnHash(hashableString)}/status.reg';
+    String api = rrr != null
+        ? 'https://www.remitademo.net/remita/ecomm/$merchantID/$rrr/${returnHash(hashableString)}/status.reg'
+        : 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/$merchantID/$orderID/${returnHash(hashableString)}/orderstatus.reg';
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
