@@ -21,8 +21,8 @@ class GenericHttp {
   ///Generic Get function to make Get API calls
   static Future<Map> getFromDB(
       {required String api,
-      required String apiKey,
-      required Map<String, String>? headers}) async {
+      String? apiKey,
+      Map<String, String>? headers}) async {
     final http.Response response =
         await http.get(Uri.parse(api), headers: headers);
 

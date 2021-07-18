@@ -79,4 +79,59 @@ class RemitaHandler {
     return RemitaStatusResponse.fromJson(await GenericHttp.getFromDB(
         api: api, apiKey: apiKey, headers: headers));
   }
+
+  /// [endDate]
+  /// This is when the mandate expires. Direct   debit instructions are no longer issuable on it.
+  /// (Format: DD/MM/YYYY)
+  Future<RemitaStatusResponse> generateMandate(
+      {required String serviceID,
+      required String requestId,
+      required String amount,
+      required String payerName,
+      required String payerEmail,
+      required String payerPhone,
+      required String payerBankCode,
+      required String payerAccount,
+      required String startDate,
+      required String endDate,
+      required String mandateType,
+      required String maxNoOfDebits,
+      List<CustomField>? customField}) async {
+    List<String> hashableString = [
+      merchantID,
+      serviceID,
+      requestId,
+      amount,
+      apiKey
+    ];
+
+    Map<String, dynamic> body = {
+      "merchantId": merchantID,
+      "serviceTypeId": serviceID,
+      "requestId": requestId,
+      "hash": returnHash(hashableString),
+      "payerName": payerName,
+      "payerEmail": payerEmail,
+      "payerPhone": payerPhone,
+      "payerBankCode": payerBankCode,
+      "payerAccount": payerAccount,
+      "amount": amount,
+      "startDate": startDate,
+      "endDate": endDate,
+      "mandateType": mandateType,
+      "maxNoOfDebits": maxNoOfDebits,
+      "customFields": CustomField.castList(customField)
+    };
+
+    return RemitaStatusResponse.fromJson(
+        await GenericHttp.postToDB(api: RemitaAPI.generateMandate, body: body));
+  }
+
+  Future<RemitaStatusResponse> printMandate(
+      {required String requestId, required String mandateId}) async {
+    List<String> hashableString = [merchantID, apiKey, requestId];
+    String api =
+        'https://www.remitademo.net/remita/ecomm/mandate/form/merchantID/${returnHash(hashableString)}/$mandateId/$requestId/rest.reg';
+    return RemitaStatusResponse.fromJson(await GenericHttp.getFromDB(api: api));
+  }
 }
