@@ -15,7 +15,12 @@ class GenericHttp {
       headers: headers,
       body: jsonEncode(body),
     );
-    return jsonDecode(response.body.split('(')[1].split(')').first);
+    try {
+      return jsonDecode(response.body.split('(')[1].split(')').first);
+    } catch (e) {
+      print(response.body);
+      return jsonDecode(response.body.split('(')[0].split(')').first);
+    }
   }
 
   ///Generic Get function to make Get API calls

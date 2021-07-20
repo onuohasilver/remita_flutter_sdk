@@ -39,9 +39,11 @@ class RemitaHandler {
       "payerEmail": payerEmail,
       "payerPhone": payerPhone,
       "description": description,
-      "customFields": CustomField.castList(customFields),
-      "lineItems": Beneficiary.castList(lineItems)
     };
+
+    if (customFields != null)
+      body['customFields'] = CustomField.castList(customFields);
+    if (lineItems != null) body["lineItems"] = Beneficiary.castList(lineItems);
     List<String> hashableString = [
       merchantID,
       serviceID,
