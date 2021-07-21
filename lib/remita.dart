@@ -122,8 +122,9 @@ class RemitaHandler {
       "endDate": endDate,
       "mandateType": mandateType,
       "maxNoOfDebits": maxNoOfDebits,
-      "customFields": CustomField.castList(customField)
     };
+    if (customField != null)
+      body["customFields"] = CustomField.castList(customField);
 
     return RemitaStatusResponse.fromJson(
         await GenericHttp.postToDB(api: RemitaAPI.generateMandate, body: body));
@@ -136,4 +137,41 @@ class RemitaHandler {
         'https://www.remitademo.net/remita/ecomm/mandate/form/merchantID/${returnHash(hashableString)}/$mandateId/$requestId/rest.reg';
     return RemitaStatusResponse.fromJson(await GenericHttp.getFromDB(api: api));
   }
+
+  Future<RemitaStatusResponse> activateMandate({
+    required String apiToken,
+    required String requestId,
+    required String mandateId,
+  }) async {
+    List<String> hashableString = [apiKey, requestId, apiToken];
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'MERCHANT_ID': merchantID,
+      'API_KEY': apiKey,
+      'REQUEST_ID': requestId,
+      'REQUEST_TS': DateTime.now().toIso8601String(),
+      'API_DETAILS_HASH': returnHash(hashableString),
+      'Authorization':
+          'remitaConsumerKey=$merchantID,remitaConsumerToken=${returnHash(hashableString)}'
+    };
+
+    Map<String, dynamic> body = {
+      "mandateId": mandateId,
+      "requestId": requestId
+    };
+    String api =
+        'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/echannel/mandate/requestAuthorization';
+
+    return RemitaStatusResponse.fromJson(await GenericHttp.postToDB(
+      api: api,
+      body: body,
+      headers: headers,
+    ));
+  }
+
+  ///
+  ///
+  ///
+
 }
