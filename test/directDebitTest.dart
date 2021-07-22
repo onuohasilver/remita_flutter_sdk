@@ -116,27 +116,29 @@ sequenceADirectDebit() {
       expect(remitaStatusResponse.statuscode, '072');
       expect(remitaStatusResponse.status, 'Pending Credit');
       expect(remitaStatusResponse.transactionRef != null, true);
-      // transactionRef = remitaStatusResponse.transactionRef!;
+      transactionRef = remitaStatusResponse.transactionRef!.toString();
     });
 
-    // test('Cancel Debit Instruction', () async {
-    //   RemitaStatusResponse remitaStatusResponse =
-    //       await remitaDirectDebit.cancelDebitInstruction(
-    //           mandateId: mandateId,
-    //           transactionRef: transactionRef,
-    //           requestId: requestId);
-    //   expect(remitaStatusResponse.requestId, requestId);
-    //   expect(remitaStatusResponse.mandateId, mandateId);
-    //   expect(remitaStatusResponse.statuscode, '02');
-    // });
+    test('Cancel Debit Instruction', () async {
+      RemitaStatusResponse remitaStatusResponse =
+          await remitaDirectDebit.cancelDebitInstruction(
+              mandateId: '200007681305',
+              transactionRef: '7681307',
+              requestId: '1524034885236');
+      print(remitaStatusResponse.toString());
+      expect(remitaStatusResponse.requestId, requestId);
+      expect(remitaStatusResponse.mandateId, mandateId);
+      expect(remitaStatusResponse.statuscode, '02');
+    });
 
-    // test('Stop Mandate', () async {
-    //   RemitaStatusResponse remitaStatusResponse = await remitaDirectDebit
-    //       .stopMandate(mandateId: mandateId, requestId: requestId);
-    //   expect(remitaStatusResponse.statuscode, '00');
-    //   expect(remitaStatusResponse.requestId, requestId);
-    //   expect(remitaStatusResponse.mandateId, mandateId);
-    //   expect(remitaStatusResponse.status, 'Successful');
-    // });
+    test('Stop Mandate', () async {
+      RemitaStatusResponse remitaStatusResponse = await remitaDirectDebit
+          .stopMandate(mandateId: mandateId, requestId: requestId);
+
+      expect(remitaStatusResponse.statuscode, '00');
+      expect(remitaStatusResponse.requestId, requestId);
+      expect(remitaStatusResponse.mandateId, mandateId);
+      expect(remitaStatusResponse.status, 'Successful');
+    });
   });
 }

@@ -301,14 +301,19 @@ class RemitaDirectDebit extends RemitaHandler {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
     };
-    //TODO: Parse hash parameters
-    List<String> hashableString = [];
+
+    List<String> hashableString = [
+      transactionRef,
+      merchantID,
+      requestId,
+      apiKey
+    ];
 
     Map<String, dynamic> body = {
       "merchantId": merchantID,
       "mandateId": mandateId,
       "hash": returnHash(hashableString),
-      "transactionRef": transactionRef,
+      "transactionRef": transactionRef.toString(),
       "requestId": requestId
     };
     return RemitaStatusResponse.fromJson(
