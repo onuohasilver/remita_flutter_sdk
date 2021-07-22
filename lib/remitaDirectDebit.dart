@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:remita_flutter_sdk/remita_handler.dart';
 import 'package:remita_flutter_sdk/responseObjects/mandateHistoryObject.dart';
 import 'package:remita_flutter_sdk/responseObjects/mandateStatus.dart';
 import 'generic/apiList.dart';
+import 'generic/dateConverter.dart';
 import 'generic/genericTypes/customFields.dart';
 import 'generic/hashGenerator.dart';
 import 'generic/httpCalls.dart';
@@ -73,12 +76,22 @@ class RemitaDirectDebit extends RemitaHandler {
         await GenericHttp.postToDB(api: api, body: body, headers: headers));
   }
 
-  Future<RemitaStatusResponse> printMandate(
+  ///Print out the Mandate HTML form
+  Future<Uri> printMandate(
       {required String requestId, required String mandateId}) async {
     List<String> hashableString = [merchantID, apiKey, requestId];
-    String api =
-        'https://www.remitademo.net/remita/ecomm/mandate/form/merchantID/${returnHash(hashableString)}/$mandateId/$requestId/rest.reg';
-    return RemitaStatusResponse.fromJson(await GenericHttp.getFromDB(api: api));
+    String apiAttachment =
+        '/mandate/form/$merchantID/${returnHash(hashableString)}/$mandateId/$requestId/rest.reg';
+    String api = RemitaAPI(demo).directDebitGetBase + apiAttachment;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+
+    late Uri uri;
+    await GenericHttp.getFromDB(api: api, headers: headers, isHtml: true)
+        .then((value) => uri = Uri.dataFromString(value.toString()));
+
+    return uri;
   }
 
   Future<RemitaStatusResponse> mandateOTPrequest({
@@ -93,7 +106,7 @@ class RemitaDirectDebit extends RemitaHandler {
       'MERCHANT_ID': merchantID,
       'API_KEY': apiKey,
       'REQUEST_ID': requestId,
-      'REQUEST_TS': DateTime.now().toIso8601String(),
+      'REQUEST_TS': requestTS(),
       'API_DETAILS_HASH': returnHash(hashableString),
     };
 
@@ -139,7 +152,7 @@ class RemitaDirectDebit extends RemitaHandler {
       'MERCHANT_ID': merchantID,
       'API_KEY': apiKey,
       'REQUEST_ID': requestId,
-      'REQUEST_TS': DateTime.now().toIso8601String(),
+      'REQUEST_TS': requestTS(),
       'API_DETAILS_HASH': returnHash(hashableString)
     };
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:remita_flutter_sdk/generic/apiList.dart';
 
 ///helper methods for http requests
 ///TODO: Map httpCalls to Singleton Class
@@ -24,16 +25,17 @@ class GenericHttp {
   }
 
   ///Generic Get function to make Get API calls
-  static Future<Map> getFromDB(
+  static Future<dynamic> getFromDB(
       {required String api,
       String? apiKey,
-      Map<String, String>? headers}) async {
+      Map<String, String>? headers,
+      bool isHtml = false}) async {
     final http.Response response =
         await http.get(Uri.parse(api), headers: headers);
 
     // return jsonDecode(response.body);
 
-    return jsonDecode(response.body);
+    return !isHtml ? jsonDecode(response.body) : response.body;
   }
 
   ///Generic Put function to make Put API calls

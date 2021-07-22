@@ -21,6 +21,6 @@ class RemitaAPI {
 
   /// The base URL for the live and demo direct debit Get requests
   get directDebitGetBase => demo
-      ? 'https://www.remitademo.net/remita/ecomm'
+      ? 'https://remitademo.net/remita/ecomm'
       : 'https://login.remita.net/remita/ecomm';
 }

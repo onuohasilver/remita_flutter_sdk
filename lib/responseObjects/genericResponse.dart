@@ -1,6 +1,6 @@
 abstract class RemitaResponse {
-  final String statusCode;
+  final String statuscode;
   final String status;
 
-  RemitaResponse(this.statusCode, this.status);
+  RemitaResponse(this.statuscode, this.status);
 }
