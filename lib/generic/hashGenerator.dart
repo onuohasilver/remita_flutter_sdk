@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:encrypt/encrypt.dart';
 
 ///Combines a parsed list of numbers and
 ///Calculates the sha 512 hash of the passed input
@@ -14,4 +15,18 @@ String returnHash(List<String> rawInput) {
   Digest digest = sha512.convert(bytes);
   String hashedString = digest.toString();
   return hashedString;
+}
+
+String aesEncrypt({
+  required String plainText,
+  required String encodeKey,
+  required String encodeIv,
+}) {
+  final key = Key.fromBase64(encodeKey);
+  final iv = IV.fromBase64(encodeIv);
+
+  final encrypter = Encrypter(AES(key, mode: AESMode.cbc, padding: 'PKCS7'));
+  final encrypted = encrypter.encrypt(plainText, iv: iv);
+
+  return encrypted.base64;
 }

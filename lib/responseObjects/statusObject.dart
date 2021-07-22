@@ -2,15 +2,11 @@ import 'package:remita_flutter_sdk/generic/dateConverter.dart';
 import 'package:remita_flutter_sdk/responseObjects/genericResponse.dart';
 
 class RemitaStatusResponse extends RemitaResponse {
-  final String? rrr,
-      orderID,
-      message,
-      transactionTime,
-      transactionRef,
-      requestId,
-      mandateId;
-  final double? amount;
+  final String? rrr, orderID, message, transactionTime, requestId, mandateId;
+  // final double? amount;
   final List? authParams;
+  final int? transactionRef;
+  final String? amount;
   final String status, statuscode;
   final DateTime? lastStatusUpdateTime;
 
@@ -44,4 +40,22 @@ class RemitaStatusResponse extends RemitaResponse {
         requestId: json['requestId'],
         mandateId: json['mandateId'],
       );
+
+  @override
+  String toString() {
+    return {
+      'amount': amount,
+      'message': message,
+      'lastStatusUpdateTime': lastStatusUpdateTime,
+      'transactionRef': transactionRef,
+      'authParams': authParams,
+      'orderID': orderID,
+      'rrr': rrr,
+      'statuscode': statuscode,
+      'status': status,
+      'transactionTime': transactionTime,
+      'requestId': requestId,
+      'mandateId': mandateId,
+    }.toString();
+  }
 }
