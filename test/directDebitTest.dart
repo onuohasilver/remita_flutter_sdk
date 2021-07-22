@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:remita_flutter_sdk/remitaDirectDebit.dart';
+import 'package:remita_flutter_sdk/responseObjects/mandateHistoryObject.dart';
+import 'package:remita_flutter_sdk/responseObjects/mandateStatus.dart';
 import 'package:remita_flutter_sdk/responseObjects/statusObject.dart';
 
 import 'mockRemitaData.dart';
@@ -60,11 +62,34 @@ sequenceADirectDebit() {
     });
 
     test('Print Mandate', () async {
-      await remitaDirectDebit
-          .printMandate(requestId: requestId, mandateId: mandateId)
-          .then((value) => print(value.host));
+      Uri printUri = await remitaDirectDebit.printMandate(
+          requestId: requestId, mandateId: mandateId);
+      expect(
+          printUri.data!
+              .contentAsString()
+              .contains('Loading Payment Mandate Form'),
+          true);
     });
 
-    test('description', () {});
+    test('Check Mandate Status', () async {
+      RemitaMandateStatus remitaStatusResponse = await remitaDirectDebit
+          .checkMandateStatus(requestId: requestId, mandateId: mandateId);
+      expect(remitaStatusResponse.mandateId, mandateId);
+      expect(remitaStatusResponse.isActive, false);
+      expect(
+          remitaStatusResponse.endDate!
+              .isAfter(remitaStatusResponse.startDate!),
+          true);
+    });
+    test('Retrieve Mandate History', () async {
+      MandateHistoryObject mandateHistoryObject = await remitaDirectDebit
+          .mandatePaymentHistory(mandateId: mandateId, requestId: requestId);
+      expect(mandateHistoryObject.statusCode, '074');
+      expect(mandateHistoryObject.status, "NO AVAILABLE RECORD");
+
+      ///TODO: Write a test for when the paymentDetails contains data
+      expect(mandateHistoryObject.data.paymentDetails!.isEmpty, true);
+      expect(mandateHistoryObject.mandateId, mandateId);
+    });
   });
 }

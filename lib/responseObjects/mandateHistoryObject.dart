@@ -16,10 +16,10 @@ class MandateHistoryObject extends RemitaResponse {
 
   factory MandateHistoryObject.fromJson(Map json) {
     return MandateHistoryObject(
-      statusCode: json['statusCode'],
+      statusCode: json['statuscode'],
       mandateId: json['mandateId'],
       requestId: json['requestId'],
-      data: MandateData.fromJson(json['data']),
+      data: MandateData.fromJson(json['data']['data']),
       status: json['status'],
     );
   }

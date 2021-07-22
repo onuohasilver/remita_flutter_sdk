@@ -2,23 +2,23 @@ import 'package:remita_flutter_sdk/generic/dateConverter.dart';
 import 'package:remita_flutter_sdk/responseObjects/genericResponse.dart';
 
 class RemitaMandateStatus extends RemitaResponse {
-  final String statusCode, status, mandateId, requestId;
-  final DateTime endDate, startDate, activationDate, registrationDate;
-  final bool isActive;
+  final String? mandateId, requestId, statuscode, status;
+  final DateTime? endDate, startDate, activationDate, registrationDate;
+  final bool? isActive;
 
   ///Dart Object representation of the response gotten from
   ///a RemitaMandate status request
-  RemitaMandateStatus({
-    required this.requestId,
-    required this.registrationDate,
-    required this.endDate,
-    required this.startDate,
-    required this.statusCode,
-    required this.status,
-    required this.mandateId,
-    required this.activationDate,
-    required this.isActive,
-  }) : super(statusCode, status);
+  RemitaMandateStatus(
+      {required this.requestId,
+      required this.registrationDate,
+      required this.endDate,
+      required this.startDate,
+      required this.mandateId,
+      required this.activationDate,
+      required this.isActive,
+      required this.status,
+      required this.statuscode})
+      : super(statuscode, status);
 
   factory RemitaMandateStatus.fromJson(Map json) {
     return RemitaMandateStatus(
@@ -26,10 +26,12 @@ class RemitaMandateStatus extends RemitaResponse {
         registrationDate: convertDate(json['registrationDate']),
         endDate: convertDate(json['endDate']),
         startDate: convertDate(json['startDate']),
-        statusCode: json['statusCode'],
         status: json['status'],
+        statuscode: json['statuscode'],
         mandateId: json['mandateId'],
-        activationDate: convertDate(json['activationDate']),
+        activationDate: json['activationDate'] != null
+            ? convertDate(json['activationDate'])
+            : null,
         isActive: json['isActive']);
   }
 
@@ -40,8 +42,6 @@ class RemitaMandateStatus extends RemitaResponse {
       'registrationDate': registrationDate,
       'endDate': endDate,
       'startDate': startDate,
-      'statusCode': statusCode,
-      'status': status,
       'mandateId': mandateId,
       'activationDate': activationDate,
       'isActive': isActive

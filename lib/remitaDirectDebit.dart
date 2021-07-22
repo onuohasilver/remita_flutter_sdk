@@ -77,6 +77,12 @@ class RemitaDirectDebit extends RemitaHandler {
   }
 
   ///Print out the Mandate HTML form
+  ///
+  ///Such payers will need to take a
+  ///printed and sigened mandate to their bank branch
+  ///(or send through their account manager)
+  ///for activation before you are able to issue
+  ///direct debit instructions on the mandate successfully.
   Future<Uri> printMandate(
       {required String requestId, required String mandateId}) async {
     List<String> hashableString = [merchantID, apiKey, requestId];
@@ -173,11 +179,20 @@ class RemitaDirectDebit extends RemitaHandler {
   Future<RemitaMandateStatus> checkMandateStatus(
       {required String requestId, required String mandateId}) async {
     List<String> hashableString = [mandateId, merchantID, requestId, apiKey];
-    String apiAttachment =
-        '/mandate/$merchantID/$requestId/${returnHash(hashableString)}/status.reg';
+    String apiAttachment = '/echannelsvc/echannel/mandate/status';
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+    Map<String, dynamic> body = {
+      "merchantId": merchantID,
+      "mandateId": mandateId,
+      "hash": returnHash(hashableString),
+      "requestId": requestId
+    };
 
-    String api = RemitaAPI(demo).directDebitGetBase + apiAttachment;
-    return RemitaMandateStatus.fromJson(await GenericHttp.getFromDB(api: api));
+    String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
+    return RemitaMandateStatus.fromJson(
+        await GenericHttp.postToDB(api: api, body: body, headers: headers));
   }
 
   ///This  allows you retrieve the history of a direct debit agreement and all debits that have been made.
@@ -194,8 +209,11 @@ class RemitaDirectDebit extends RemitaHandler {
       "hash": returnHash(hashableString),
       "requestId": requestId
     };
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
     return MandateHistoryObject.fromJson(
-        await GenericHttp.postToDB(api: api, body: body));
+        await GenericHttp.postToDB(api: api, body: body, headers: headers));
   }
 
   ///This allows you to stop a mandate.

@@ -16,10 +16,10 @@ class GenericHttp {
       headers: headers,
       body: jsonEncode(body),
     );
+
     try {
       return jsonDecode(response.body.split('(')[1].split(')').first);
     } catch (e) {
-      print(response.body);
       return jsonDecode(response.body.split('(')[0].split(')').first);
     }
   }
@@ -35,7 +35,16 @@ class GenericHttp {
 
     // return jsonDecode(response.body);
 
-    return !isHtml ? jsonDecode(response.body) : response.body;
+    try {
+      return !isHtml
+          ? jsonDecode(response.body.split('(')[1].split(')').first)
+          : response.body;
+    } catch (e) {
+      print(response.body);
+      return !isHtml
+          ? jsonDecode(response.body.split('(')[0].split(')').first)
+          : response.body;
+    }
   }
 
   ///Generic Put function to make Put API calls
