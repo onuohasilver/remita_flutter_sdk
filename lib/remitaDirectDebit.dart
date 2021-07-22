@@ -13,8 +13,8 @@ class RemitaDirectDebit extends RemitaHandler {
   final bool demo;
 
   RemitaDirectDebit(
-      {required this.merchantID, required this.apiKey, required this.demo})
-      : super(merchantID: merchantID, apiKey: apiKey);
+      {required this.merchantID, required this.apiKey, this.demo = true})
+      : super(merchantID: merchantID, apiKey: apiKey, demo: demo);
 
   /// [endDate]
   /// This is when the mandate expires. Direct   debit instructions are no longer issuable on it.
@@ -52,16 +52,13 @@ class RemitaDirectDebit extends RemitaHandler {
       "payerBankCode": payerBankCode,
       "payerAccount": payerAccount,
       "amount": amount,
-      "startDate": "${startDate.day}" +
-          "/" +
-          "${startDate.month}" +
-          "/" +
+      "startDate": "${startDate.month}" +
+          '/' +
+          "${startDate.day}" +
+          '/' +
           "${startDate.year}",
-      "endDate": "${startDate.day}" +
-          "/" +
-          "${startDate.month}" +
-          "/" +
-          "${startDate.year}",
+      "endDate":
+          "${endDate.month}" + '/' + "${endDate.day}" + '/' + "${endDate.year}",
       "mandateType": mandateType,
       "maxNoOfDebits": maxNoOfDebits,
     };
@@ -70,8 +67,10 @@ class RemitaDirectDebit extends RemitaHandler {
     String apiAttachment = '/echannelsvc/echannel/mandate/setup';
     String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
 
+    Map<String, String> headers = {'Content-Type': 'application/json'};
+
     return RemitaStatusResponse.fromJson(
-        await GenericHttp.postToDB(api: api, body: body));
+        await GenericHttp.postToDB(api: api, body: body, headers: headers));
   }
 
   Future<RemitaStatusResponse> printMandate(

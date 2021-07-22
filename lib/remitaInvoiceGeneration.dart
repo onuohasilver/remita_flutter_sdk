@@ -17,7 +17,7 @@ class RemitaInvoiceGeneration extends RemitaHandler {
     required this.apiKey,
     required this.merchantID,
     this.demo = true,
-  }) : super(apiKey: apiKey, merchantID: merchantID);
+  }) : super(apiKey: apiKey, merchantID: merchantID, demo: demo);
 
   ///RRR  Generation
   ///

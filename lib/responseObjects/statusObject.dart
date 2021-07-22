@@ -8,9 +8,9 @@ class RemitaStatusResponse extends RemitaResponse {
       remitaTransRef,
       requestId,
       mandateId;
-  final double amount;
-  final List authParams;
-  final String status, statusCode;
+  final double? amount;
+  final List? authParams;
+  final String status, statuscode;
 
   RemitaStatusResponse(
       {required this.amount,
@@ -22,9 +22,9 @@ class RemitaStatusResponse extends RemitaResponse {
       required this.remitaTransRef,
       required this.message,
       required this.transactionTime,
-      required this.statusCode,
+      required this.statuscode,
       required this.status})
-      : super(statusCode, status);
+      : super(statuscode, status);
   factory RemitaStatusResponse.fromJson(Map json) => RemitaStatusResponse(
         amount: json['amount'],
         message: json['message'],
@@ -32,7 +32,7 @@ class RemitaStatusResponse extends RemitaResponse {
         authParams: json['authParams'],
         orderID: json['orderId'],
         rrr: json['RRR'],
-        statusCode: json['statusCode'],
+        statuscode: json['statuscode'],
         status: json['status'],
         transactionTime: json['transactiontime'],
         requestId: json['requestId'],
