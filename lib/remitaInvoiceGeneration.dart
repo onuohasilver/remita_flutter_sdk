@@ -11,9 +11,12 @@ import 'responseObjects/statusObject.dart';
 class RemitaInvoiceGeneration extends RemitaHandler {
   final String merchantID;
   final String apiKey;
+  final bool demo;
+
   RemitaInvoiceGeneration({
     required this.apiKey,
     required this.merchantID,
+    this.demo = true,
   }) : super(apiKey: apiKey, merchantID: merchantID);
 
   ///RRR  Generation
@@ -58,9 +61,12 @@ class RemitaInvoiceGeneration extends RemitaHandler {
       'Authorization':
           'remitaConsumerKey=$merchantID,remitaConsumerToken=${returnHash(hashableString)}'
     };
+    String apiAttachment = '/echannelsvc/merchant/api/paymentinit';
 
     return RemitaChargeResponse.fromJson(await GenericHttp.postToDB(
-        api: RemitaAPI.generateRRR, body: body, headers: headers));
+        api: RemitaAPI(demo).invoiceGenerationBase + apiAttachment,
+        body: body,
+        headers: headers));
   }
 
 // curl --location -g --request GET 'http://www.remitademo.net/remita/ecomm/{{merchantId}}/{{rrr}}/{{apiHash}}/status.reg' \
@@ -70,9 +76,20 @@ class RemitaInvoiceGeneration extends RemitaHandler {
       {String? rrr, String? orderID}) async {
     assert((orderID != null) | (rrr != null));
     List<String> hashableString = [rrr ?? orderID!, apiKey, merchantID];
-    String api = rrr != null
-        ? 'https://www.remitademo.net/remita/ecomm/$merchantID/$rrr/${returnHash(hashableString)}/status.reg'
-        : 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/$merchantID/$orderID/${returnHash(hashableString)}/orderstatus.reg';
+
+    ///The attachement to be added to the tail end of the base Url when checking
+    ///transaction status using OrderID
+    String apiAttachmentOrderID =
+        '/$merchantID/$rrr/${returnHash(hashableString)}/status.reg';
+
+    ///The attachement to be added to the tail end of the base Url when checking
+    ///transaction status using RRR
+    String apiAttachmentRRR =
+        '/echannelsvc/$merchantID/$orderID/${returnHash(hashableString)}/orderstatus.reg';
+
+    ///Combining the baseUrl and the api Attachment
+    String api = RemitaAPI(demo).directDebitGetBase +
+        (rrr != null ? apiAttachmentRRR : apiAttachmentOrderID);
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',

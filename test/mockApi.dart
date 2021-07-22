@@ -32,11 +32,3 @@ class MockData {
     )
   ];
 }
-// expect(actual, {
-//         "lineItemsId": "itemid1",
-//         "beneficiaryName": "Alozie Michael",
-//         "beneficiaryAccount": "6020067886",
-//         "bankCode": "058",
-//         "beneficiaryAmount": "7000",
-//         "deductFeeFrom": "1"
-//       });

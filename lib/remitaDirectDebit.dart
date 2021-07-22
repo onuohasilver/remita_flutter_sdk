@@ -1,14 +1,18 @@
+import 'package:remita_flutter_sdk/remita_handler.dart';
 import 'generic/apiList.dart';
 import 'generic/genericTypes/customFields.dart';
 import 'generic/hashGenerator.dart';
 import 'generic/httpCalls.dart';
 import 'responseObjects/statusObject.dart';
 
-class RemitaDirectDebit {
+class RemitaDirectDebit extends RemitaHandler {
   final String merchantID;
   final String apiKey;
+  final bool demo;
 
-  RemitaDirectDebit({required this.merchantID, required this.apiKey});
+  RemitaDirectDebit(
+      {required this.merchantID, required this.apiKey, required this.demo})
+      : super(merchantID: merchantID, apiKey: apiKey);
 
   /// [endDate]
   /// This is when the mandate expires. Direct   debit instructions are no longer issuable on it.
@@ -22,8 +26,8 @@ class RemitaDirectDebit {
       required String payerPhone,
       required String payerBankCode,
       required String payerAccount,
-      required String startDate,
-      required String endDate,
+      required DateTime startDate,
+      required DateTime endDate,
       required String mandateType,
       required String maxNoOfDebits,
       List<CustomField>? customField}) async {
@@ -46,16 +50,26 @@ class RemitaDirectDebit {
       "payerBankCode": payerBankCode,
       "payerAccount": payerAccount,
       "amount": amount,
-      "startDate": startDate,
-      "endDate": endDate,
+      "startDate": "${startDate.day}" +
+          "/" +
+          "${startDate.month}" +
+          "/" +
+          "${startDate.year}",
+      "endDate": "${startDate.day}" +
+          "/" +
+          "${startDate.month}" +
+          "/" +
+          "${startDate.year}",
       "mandateType": mandateType,
       "maxNoOfDebits": maxNoOfDebits,
     };
     if (customField != null)
       body["customFields"] = CustomField.castList(customField);
+    String apiAttachment = '/echannelsvc/echannel/mandate/setup';
+    String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
 
     return RemitaStatusResponse.fromJson(
-        await GenericHttp.postToDB(api: RemitaAPI.generateMandate, body: body));
+        await GenericHttp.postToDB(api: api, body: body));
   }
 
   Future<RemitaStatusResponse> printMandate(
@@ -107,7 +121,7 @@ class RemitaDirectDebit {
       required String remitaTransferRef,
       required String otp,
       required String card,
-      required String apiToken}) {
+      required String apiToken}) async {
     String api =
         'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/echannel/mandate/validateAuthorization';
 
@@ -135,5 +149,12 @@ class RemitaDirectDebit {
         {"param2": "CARD", "value": card}
       ]
     };
+    return RemitaStatusResponse.fromJson(await GenericHttp.postToDB(
+      api: api,
+      body: body,
+      headers: headers,
+    ));
   }
+
+  checkMandateStatus() async {}
 }
