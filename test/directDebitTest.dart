@@ -91,5 +91,14 @@ sequenceADirectDebit() {
       expect(mandateHistoryObject.data.paymentDetails!.isEmpty, true);
       expect(mandateHistoryObject.mandateId, mandateId);
     });
+
+    test('Stop Mandate', () async {
+      RemitaStatusResponse remitaStatusResponse = await remitaDirectDebit
+          .stopMandate(mandateId: mandateId, requestId: requestId);
+      expect(remitaStatusResponse.statuscode, '00');
+      expect(remitaStatusResponse.requestId, requestId);
+      expect(remitaStatusResponse.mandateId, mandateId);
+      expect(remitaStatusResponse.status, 'Successful');
+    });
   });
 }

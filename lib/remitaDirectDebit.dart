@@ -230,7 +230,10 @@ class RemitaDirectDebit extends RemitaHandler {
       "mandateId": mandateId,
       "requestId": requestId
     };
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
     return RemitaStatusResponse.fromJson(
-        await GenericHttp.postToDB(api: api, body: body));
+        await GenericHttp.postToDB(api: api, body: body, headers: headers));
   }
 }
