@@ -1,4 +1,5 @@
 import 'package:remita_flutter_sdk/remita_handler.dart';
+import 'package:remita_flutter_sdk/responseObjects/mandateStatus.dart';
 import 'generic/apiList.dart';
 import 'generic/genericTypes/customFields.dart';
 import 'generic/hashGenerator.dart';
@@ -110,20 +111,21 @@ class RemitaDirectDebit extends RemitaHandler {
     ));
   }
 
-  ///This method is applicable to Payers whose funding bank is integrated to the Remita Platform for One Time Password (OTP) authentication. Such users will be able to activate direct debit mandates directly on your portal.
-
+  ///This method is applicable to Payers whose funding bank is integrated to the Remita Platform
+  /// for One Time Password (OTP) authentication.
+  /// Such users will be able to activate direct debit mandates directly on your portal.
   ///This request triggers the Payer's
   ///bank to send their requirements for automated mandate activation.
 
   mandateOTPactivate(
-      {required String merchantID,
-      required String requestId,
+      {required String requestId,
       required String remitaTransferRef,
       required String otp,
       required String card,
       required String apiToken}) async {
-    String api =
-        'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/echannel/mandate/validateAuthorization';
+    String apiAttachment =
+        '/echannelsvc/echannel/mandate/validateAuthorization';
+    String api = RemitaAPI(demo).invoiceGenerationBase + apiAttachment;
 
     List<String> hashableString = [
       apiKey,
@@ -141,7 +143,6 @@ class RemitaDirectDebit extends RemitaHandler {
       'API_DETAILS_HASH': returnHash(hashableString)
     };
 
-    ///
     Map<String, dynamic> body = {
       "remitaTransRef": remitaTransferRef,
       "authParams": [
@@ -156,5 +157,30 @@ class RemitaDirectDebit extends RemitaHandler {
     ));
   }
 
-  checkMandateStatus() async {}
+  checkMandateStatus(
+      {required String requestId, required String mandateId}) async {
+    List<String> hashableString = [mandateId, merchantID, requestId, apiKey];
+    String apiAttachment =
+        '/mandate/$merchantID/$requestId/${returnHash(hashableString)}/status.reg';
+
+    String api = RemitaAPI(demo).directDebitGetBase + apiAttachment;
+    return RemitaMandateStatus.fromJson(await GenericHttp.getFromDB(api: api));
+  }
+
+  ///This  allows you retrieve the history of a direct debit agreement and all debits that have been made.
+  mandatePaymentHistory({
+    required String mandateId,
+    required String requestId,
+  }) {
+    String apiAttachment = '/echannelsvc/echannel/mandate/payment/history';
+    String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
+    List<String> hashableString = [mandateId, merchantID, requestId, apiKey];
+    Map<String, dynamic> body = {
+      "merchantId": merchantID,
+      "mandateId": mandateId,
+      "hash": returnHash(hashableString),
+      "requestId": requestId
+    };
+    return;
+  }
 }

@@ -1,16 +1,18 @@
-class RemitaStatusResponse {
+import 'package:remita_flutter_sdk/responseObjects/genericResponse.dart';
+
+class RemitaStatusResponse extends RemitaResponse {
   final String? rrr,
       orderID,
       message,
       transactionTime,
-      status,
       remitaTransRef,
       requestId,
       mandateId;
   final double amount;
   final List authParams;
+  final String status, statusCode;
 
-  const RemitaStatusResponse(
+  RemitaStatusResponse(
       {required this.amount,
       required this.rrr,
       required this.requestId,
@@ -20,14 +22,17 @@ class RemitaStatusResponse {
       required this.remitaTransRef,
       required this.message,
       required this.transactionTime,
-      required this.status});
+      required this.statusCode,
+      required this.status})
+      : super(statusCode, status);
   factory RemitaStatusResponse.fromJson(Map json) => RemitaStatusResponse(
         amount: json['amount'],
         message: json['message'],
-        remitaTransRef:json['remitaTransREf'],
+        remitaTransRef: json['remitaTransRef'],
         authParams: json['authParams'],
         orderID: json['orderId'],
         rrr: json['RRR'],
+        statusCode: json['statusCode'],
         status: json['status'],
         transactionTime: json['transactiontime'],
         requestId: json['requestId'],
