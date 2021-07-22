@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:remita_flutter_sdk/generic/genericTypes/beneficiary.dart';
 import 'package:remita_flutter_sdk/generic/genericTypes/customFields.dart';
@@ -31,8 +32,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  RemitaHandler remitaHandler =
-      RemitaHandler(merchantID: '2547916', apiKey: '1946');
+  RemitaInvoiceGeneration remitaHandler =
+      RemitaInvoiceGeneration(merchantID: '2547916', apiKey: '1946');
+  bool loading = false;
   String result = '';
   @override
   Widget build(BuildContext context) {
@@ -58,106 +60,166 @@ class _MyHomePageState extends State<MyHomePage> {
                   Text(
                     'Query Results',
                   ),
-                  Text(result)
+                  loading
+                      ? Center(child: CircularProgressIndicator())
+                      : Text(result)
                 ],
               ),
             ),
             Flexible(
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        remitaHandler
-                            .generateRRR(
-                                serviceID: '4430731',
-                                amount: '20200',
-                                orderID: 'aaxxxaXs',
-                                payerName: 'Ali Nuhu',
-                                payerEmail: 'alinuhu@gmail.com',
-                                payerPhone: '08032773333',
-                                description: 'Coffee')
-                            .then((value) => setState(() {
-                                  result = value.toString();
-                                }));
-                      },
-                      child: Container(
-                        color: Colors.deepOrange,
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Generate RRR',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )),
-                  TextButton(
-                      onPressed: () {
-                        remitaHandler
-                            .generateRRR(
-                                serviceID: '4430731',
-                                amount: '20200',
-                                orderID: 'xsa',
-                                payerName: 'Ali Nuhu',
-                                payerEmail: 'alinuhu@gmail.com',
-                                payerPhone: '08032773333',
-                                customFields: [
-                                  CustomField(
-                                      value: '1234567890',
-                                      name: 'Payer TIN',
-                                      type: 'ALL')
-                                ],
-                                description: 'Coffee')
-                            .then((value) => setState(() {
-                                  result = value.toString();
-                                }));
-                      },
-                      child: Container(
-                        color: Colors.deepOrange,
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Generate RRR with Custom Fields',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )),
-                  TextButton(
-                      onPressed: () {
-                        remitaHandler
-                            .generateRRR(
-                                serviceID: '4430731',
-                                amount: '20200',
-                                orderID: 'xxsxa',
-                                payerName: 'Ali Nuhu',
-                                payerEmail: 'alinuhu@gmail.com',
-                                payerPhone: '08032773333',
-                                lineItems: [
-                                  Beneficiary(
-                                      linesItemId: 'itemid1',
-                                      beneficiaryName: 'Alozie Michael',
-                                      beneficiaryAccount: '6020067886',
-                                      bankCode: '058',
-                                      beneficiaryAmount: '20000',
-                                      deductFeeFrom: '1'),
-                                  Beneficiary(
-                                      linesItemId: 'itemid2',
-                                      beneficiaryName: 'Folivi Joshua',
-                                      beneficiaryAccount: '0360883515',
-                                      bankCode: '058',
-                                      beneficiaryAmount: '200',
-                                      deductFeeFrom: '0')
-                                ],
-                                description: 'Coffee')
-                            .then((value) => setState(() {
-                                  result = value.toString();
-                                }));
-                      },
-                      child: Container(
-                        color: Colors.deepOrange,
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Generate RRR with Split Payment',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )),
-                ],
+              child: Container(
+                height: height * .1,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            loading = true;
+                          });
+                          remitaHandler
+                              .generateRRR(
+                                  serviceID: '4430731',
+                                  amount: '20200',
+                                  orderID: getRandomString(5),
+                                  payerName: 'Ali Nuhu',
+                                  payerEmail: 'alinuhu@gmail.com',
+                                  payerPhone: '08032773333',
+                                  description: 'Coffee')
+                              .then((value) => setState(() {
+                                    result = value.toString();
+                                    loading = false;
+                                  }));
+                        },
+                        child: Container(
+                          color: Colors.deepOrange,
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            'Generate RRR',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )),
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            loading = true;
+                          });
+                          remitaHandler
+                              .generateRRR(
+                                  serviceID: '4430731',
+                                  amount: '20200',
+                                  orderID: getRandomString(5),
+                                  payerName: 'Ali Nuhu',
+                                  payerEmail: 'alinuhu@gmail.com',
+                                  payerPhone: '08032773333',
+                                  customFields: [
+                                    CustomField(
+                                        value: '1234567890',
+                                        name: 'Payer TIN',
+                                        type: 'ALL')
+                                  ],
+                                  description: 'Coffee')
+                              .then((value) => setState(() {
+                                    result = value.toString();
+                                  }));
+                        },
+                        child: Container(
+                          color: Colors.deepOrange,
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            'Generate RRR with Custom Fields',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )),
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            loading = true;
+                          });
+                          remitaHandler
+                              .generateRRR(
+                                  serviceID: '4430731',
+                                  amount: '20200',
+                                  orderID: getRandomString(5),
+                                  payerName: 'Ali Nuhu',
+                                  payerEmail: 'alinuhu@gmail.com',
+                                  payerPhone: '08032773333',
+                                  lineItems: [
+                                    Beneficiary(
+                                        linesItemId: 'itemid1',
+                                        beneficiaryName: 'Alozie Michael',
+                                        beneficiaryAccount: '6020067886',
+                                        bankCode: '058',
+                                        beneficiaryAmount: '20000',
+                                        deductFeeFrom: '1'),
+                                    Beneficiary(
+                                        linesItemId: 'itemid2',
+                                        beneficiaryName: 'Folivi Joshua',
+                                        beneficiaryAccount: '0360883515',
+                                        bankCode: '058',
+                                        beneficiaryAmount: '200',
+                                        deductFeeFrom: '0')
+                                  ],
+                                  description: 'Coffee')
+                              .then((value) => setState(() {
+                                    result = value.toString();
+                                    loading = false;
+                                  }));
+                        },
+                        child: Container(
+                          color: Colors.deepOrange,
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            'Generate RRR with Split Payment',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )),
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            loading = true;
+                          });
+
+                          remitaHandler
+                              .generateRRR(
+                                  serviceID: '4430731',
+                                  amount: '20200',
+                                  orderID: 'xxsxa',
+                                  payerName: 'Ali Nuhu',
+                                  payerEmail: 'alinuhu@gmail.com',
+                                  payerPhone: '08032773333',
+                                  lineItems: [
+                                    Beneficiary(
+                                        linesItemId: 'itemid1',
+                                        beneficiaryName: 'Alozie Michael',
+                                        beneficiaryAccount: '6020067886',
+                                        bankCode: '058',
+                                        beneficiaryAmount: '20000',
+                                        deductFeeFrom: '1'),
+                                    Beneficiary(
+                                        linesItemId: 'itemid2',
+                                        beneficiaryName: 'Folivi Joshua',
+                                        beneficiaryAccount: '0360883515',
+                                        bankCode: '058',
+                                        beneficiaryAmount: '200',
+                                        deductFeeFrom: '0')
+                                  ],
+                                  description: 'Coffee')
+                              .then((value) => setState(() {
+                                    result = value.toString();
+                                    loading = false;
+                                  }));
+                        },
+                        child: Container(
+                          color: Colors.deepOrange,
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            'Generate RRR with Split Payment',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )),
+                  ],
+                ),
               ),
             )
           ],
@@ -166,3 +228,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+Random _rnd = Random();
+
+String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+    length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
