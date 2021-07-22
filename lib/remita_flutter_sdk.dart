@@ -1,3 +1,3 @@
 library remita_flutter_sdk;
 
-export 'remita.dart';
+export 'remitaInvoiceGeneration.dart';

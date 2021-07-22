@@ -1,86 +1,14 @@
-import 'package:remita_flutter_sdk/generic/apiList.dart';
-import 'package:remita_flutter_sdk/generic/genericTypes/beneficiary.dart';
-import 'package:remita_flutter_sdk/generic/genericTypes/customFields.dart';
-
+import 'generic/apiList.dart';
+import 'generic/genericTypes/customFields.dart';
 import 'generic/hashGenerator.dart';
 import 'generic/httpCalls.dart';
-import 'responseObjects/chargeObject.dart';
 import 'responseObjects/statusObject.dart';
 
-class RemitaHandler {
+class RemitaDirectDebit {
   final String merchantID;
   final String apiKey;
-  RemitaHandler({
-    required this.apiKey,
-    required this.merchantID,
-  });
 
-  ///RRR  Generation
-  ///
-  ///You can use our Generate RRR (with Custom Field) API to generate an RRR
-  ///with custom field values.
-  ///Custom fields are additional fields associated with the service type for which the RRR is being generated.
-  Future<RemitaChargeResponse> generateRRR({
-    required String serviceID,
-    required String amount,
-    required String orderID,
-    required String payerName,
-    required String payerEmail,
-    required String payerPhone,
-    required String description,
-    List<CustomField>? customFields,
-    List<Beneficiary>? lineItems,
-  }) async {
-    Map<String, dynamic> body = {
-      "serviceTypeId": serviceID,
-      "amount": amount,
-      "orderId": orderID,
-      "payerName": payerName,
-      "payerEmail": payerEmail,
-      "payerPhone": payerPhone,
-      "description": description,
-    };
-
-    if (customFields != null)
-      body['customFields'] = CustomField.castList(customFields);
-    if (lineItems != null) body["lineItems"] = Beneficiary.castList(lineItems);
-    List<String> hashableString = [
-      merchantID,
-      serviceID,
-      orderID,
-      amount,
-      apiKey
-    ];
-
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization':
-          'remitaConsumerKey=$merchantID,remitaConsumerToken=${returnHash(hashableString)}'
-    };
-
-    return RemitaChargeResponse.fromJson(await GenericHttp.postToDB(
-        api: RemitaAPI.generateRRR, body: body, headers: headers));
-  }
-
-// curl --location -g --request GET 'http://www.remitademo.net/remita/ecomm/{{merchantId}}/{{rrr}}/{{apiHash}}/status.reg' \
-// --header 'Content-Type: application/json' \
-// --header 'Authorization: remitaConsumerKey={{merchantId}},remitaConsumerToken={{apiHash}}'
-  Future<RemitaStatusResponse> checkTransactionStatus(
-      {String? rrr, String? orderID}) async {
-    assert((orderID != null) | (rrr != null));
-    List<String> hashableString = [rrr ?? orderID!, apiKey, merchantID];
-    String api = rrr != null
-        ? 'https://www.remitademo.net/remita/ecomm/$merchantID/$rrr/${returnHash(hashableString)}/status.reg'
-        : 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/$merchantID/$orderID/${returnHash(hashableString)}/orderstatus.reg';
-
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization':
-          'remitaConsumerKey=$merchantID,remitaConsumerToken=${returnHash(hashableString)}'
-    };
-    return RemitaStatusResponse.fromJson(await GenericHttp.getFromDB(
-        api: api, apiKey: apiKey, headers: headers));
-  }
+  RemitaDirectDebit({required this.merchantID, required this.apiKey});
 
   /// [endDate]
   /// This is when the mandate expires. Direct   debit instructions are no longer issuable on it.
@@ -168,8 +96,6 @@ class RemitaHandler {
     ));
   }
 
-  ///
-  ///
   ///This method is applicable to Payers whose funding bank is integrated to the Remita Platform for One Time Password (OTP) authentication. Such users will be able to activate direct debit mandates directly on your portal.
 
   ///This request triggers the Payer's
@@ -185,18 +111,25 @@ class RemitaHandler {
     String api =
         'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/echannel/mandate/validateAuthorization';
 
-    List<String> hashableString = [apiKey, requestId, apiToken];
+    List<String> hashableString = [
+      apiKey,
+      requestId,
+      apiToken,
+    ];
+
+    /// For
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'MERCHANT_ID': merchantID,
       'API_KEY': apiKey,
       'REQUEST_ID': requestId,
       'REQUEST_TS': DateTime.now().toIso8601String(),
-      'API_DETAILS_HASH': returnHash(hashableString),
+      'API_DETAILS_HASH': returnHash(hashableString)
     };
 
+    ///
     Map<String, dynamic> body = {
-      "remitaTransRef": "{{remitaTransRef}}",
+      "remitaTransRef": remitaTransferRef,
       "authParams": [
         {"param1": "OTP", "value": otp},
         {"param2": "CARD", "value": card}

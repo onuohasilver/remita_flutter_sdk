@@ -32,8 +32,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  RemitaHandler remitaHandler =
-      RemitaHandler(merchantID: '2547916', apiKey: '1946');
+  RemitaInvoiceGeneration remitaHandler =
+      RemitaInvoiceGeneration(merchantID: '2547916', apiKey: '1946');
   bool loading = false;
   String result = '';
   @override
