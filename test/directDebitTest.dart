@@ -4,7 +4,7 @@ import 'package:remita_flutter_sdk/responseObjects/mandateHistoryObject.dart';
 import 'package:remita_flutter_sdk/responseObjects/mandateStatus.dart';
 import 'package:remita_flutter_sdk/responseObjects/statusObject.dart';
 
-import 'mockRemitaData.dart';
+import 'mockDirectDebit.dart';
 
 sequenceADirectDebit() {
   RemitaDirectDebit remitaDirectDebit = RemitaDirectDebit(
