@@ -138,7 +138,7 @@ class RemitaHandler {
     return RemitaStatusResponse.fromJson(await GenericHttp.getFromDB(api: api));
   }
 
-  Future<RemitaStatusResponse> activateMandate({
+  Future<RemitaStatusResponse> mandateOTPrequest({
     required String apiToken,
     required String requestId,
     required String mandateId,
@@ -152,8 +152,6 @@ class RemitaHandler {
       'REQUEST_ID': requestId,
       'REQUEST_TS': DateTime.now().toIso8601String(),
       'API_DETAILS_HASH': returnHash(hashableString),
-      'Authorization':
-          'remitaConsumerKey=$merchantID,remitaConsumerToken=${returnHash(hashableString)}'
     };
 
     Map<String, dynamic> body = {
@@ -172,6 +170,37 @@ class RemitaHandler {
 
   ///
   ///
-  ///
+  ///This method is applicable to Payers whose funding bank is integrated to the Remita Platform for One Time Password (OTP) authentication. Such users will be able to activate direct debit mandates directly on your portal.
 
+  ///This request triggers the Payer's
+  ///bank to send their requirements for automated mandate activation.
+
+  mandateOTPactivate(
+      {required String merchantID,
+      required String requestId,
+      required String remitaTransferRef,
+      required String otp,
+      required String card,
+      required String apiToken}) {
+    String api =
+        'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/echannel/mandate/validateAuthorization';
+
+    List<String> hashableString = [apiKey, requestId, apiToken];
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'MERCHANT_ID': merchantID,
+      'API_KEY': apiKey,
+      'REQUEST_ID': requestId,
+      'REQUEST_TS': DateTime.now().toIso8601String(),
+      'API_DETAILS_HASH': returnHash(hashableString),
+    };
+
+    Map<String, dynamic> body = {
+      "remitaTransRef": "{{remitaTransRef}}",
+      "authParams": [
+        {"param1": "OTP", "value": otp},
+        {"param2": "CARD", "value": card}
+      ]
+    };
+  }
 }
