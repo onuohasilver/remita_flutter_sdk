@@ -12,7 +12,7 @@ import 'invoiceGenerationTest.dart';
 import 'mockApi.dart';
 
 void main() {
-  group('description', () {
+  group('Remita Flutter SDK Tests', () {
     createTestRRR();
     customFieldTest();
     dateConverterTest();

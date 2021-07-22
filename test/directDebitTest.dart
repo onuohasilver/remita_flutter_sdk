@@ -11,7 +11,7 @@ sequenceADirectDebit() {
       merchantID: MockDirectDebit.merchantId, apiKey: MockDirectDebit.apiKey);
 
   group('Sequence A Direct Debit', () {
-    late String mandateId, requestId;
+    late String mandateId, requestId, transactionRef;
 
     test('Generate A Mandate', () async {
       RemitaStatusResponse remitaStatusResponse =
@@ -90,6 +90,38 @@ sequenceADirectDebit() {
       ///TODO: Write a test for when the paymentDetails contains data
       expect(mandateHistoryObject.data.paymentDetails!.isEmpty, true);
       expect(mandateHistoryObject.mandateId, mandateId);
+    });
+
+    test('Send Debit Instruction', () async {
+      RemitaStatusResponse remitaStatusResponse =
+          await remitaDirectDebit.sendDebitInstruction(
+              serviceId: MockDirectDebit.serviceTypeId,
+              requestId: requestId,
+              debitAmount: MockDirectDebit.amount,
+              mandateId: mandateId,
+              payerAccount: MockDirectDebit.payerAccount,
+              payerBankCode: MockDirectDebit.payerBankCode);
+      expect(remitaStatusResponse.statuscode, '061');
+      expect(remitaStatusResponse.status, 'Mandate Not Activated');
+    });
+
+    test('Check Debit Instruction Status', () async {
+      RemitaStatusResponse remitaStatusResponse = await remitaDirectDebit
+          .debitInstructionStatus(mandateId: mandateId, requestId: requestId);
+      expect(remitaStatusResponse.statuscode, '070');
+      expect(remitaStatusResponse.status, 'Awaiting Debit');
+      transactionRef = remitaStatusResponse.transactionRef!;
+    });
+
+    test('Cancel Debit Instruction', () async {
+      RemitaStatusResponse remitaStatusResponse =
+          await remitaDirectDebit.cancelDebitInstruction(
+              mandateId: mandateId,
+              transactionRef: transactionRef,
+              requestId: requestId);
+      expect(remitaStatusResponse.requestId, requestId);
+      expect(remitaStatusResponse.mandateId, mandateId);
+      expect(remitaStatusResponse.statuscode, '02');
     });
 
     test('Stop Mandate', () async {
