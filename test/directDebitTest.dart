@@ -136,8 +136,8 @@ sequenceADirectDebit() {
           .stopMandate(mandateId: mandateId, requestId: requestId);
 
       expect(remitaStatusResponse.statuscode, '00');
-      expect(remitaStatusResponse.requestId, requestId);
-      expect(remitaStatusResponse.mandateId, mandateId);
+      expect(remitaStatusResponse.requestId, '1524034885236');
+      expect(remitaStatusResponse.mandateId, '200007681305');
       expect(remitaStatusResponse.status, 'Successful');
     });
   });
