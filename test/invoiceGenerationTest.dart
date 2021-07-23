@@ -4,7 +4,9 @@ import 'package:remita_flutter_sdk/responseObjects/chargeObject.dart';
 import 'mockApi.dart';
 
 createTestRRR() {
-  test('s', () async {
+
+  group(,(){});
+  test('Create Mock RRR', () async {
     RemitaChargeResponse remitaChargeResponse =
         await Mock.generateRRR(MockData.rrrData);
     expect(remitaChargeResponse.rrr, '250008102864');

@@ -112,7 +112,7 @@ sequenceADirectDebit() {
       RemitaStatusResponse remitaStatusResponse =
           await remitaDirectDebit.debitInstructionStatus(
               mandateId: '140007735469', requestId: '1551782788673');
-      print(remitaStatusResponse.toString());
+
       expect(remitaStatusResponse.statuscode, '072');
       expect(remitaStatusResponse.status, 'Pending Credit');
       expect(remitaStatusResponse.transactionRef != null, true);
@@ -125,9 +125,9 @@ sequenceADirectDebit() {
               mandateId: '200007681305',
               transactionRef: '7681307',
               requestId: '1524034885236');
-      print(remitaStatusResponse.toString());
-      expect(remitaStatusResponse.requestId, requestId);
-      expect(remitaStatusResponse.mandateId, mandateId);
+      // print(remitaStatusResponse.toString());
+      expect(remitaStatusResponse.requestId, '1524034885236');
+      expect(remitaStatusResponse.mandateId, '200007681305');
       expect(remitaStatusResponse.statuscode, '02');
     });
 
@@ -136,8 +136,8 @@ sequenceADirectDebit() {
           .stopMandate(mandateId: mandateId, requestId: requestId);
 
       expect(remitaStatusResponse.statuscode, '00');
-      expect(remitaStatusResponse.requestId, '1524034885236');
-      expect(remitaStatusResponse.mandateId, '200007681305');
+      expect(remitaStatusResponse.requestId, requestId);
+      expect(remitaStatusResponse.mandateId, mandateId);
       expect(remitaStatusResponse.status, 'Successful');
     });
   });

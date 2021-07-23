@@ -22,8 +22,8 @@ String aesEncrypt({
   required String encodeKey,
   required String encodeIv,
 }) {
-  final key = Key.fromBase64(encodeKey);
-  final iv = IV.fromBase64(encodeIv);
+  final key = Key.fromUtf8(encodeKey);
+  final iv = IV.fromUtf8(encodeIv);
 
   final encrypter = Encrypter(AES(key, mode: AESMode.cbc, padding: 'PKCS7'));
   final encrypted = encrypter.encrypt(plainText, iv: iv);
