@@ -48,7 +48,7 @@ class RemitaDirectDebit extends RemitaHandler {
       "merchantId": merchantID,
       "serviceTypeId": serviceID,
       "requestId": requestId,
-      "hash": returnHash(hashableString),
+      "hash": Encryption.sha512Encrypt(hashableString),
       "payerName": payerName,
       "payerEmail": payerEmail,
       "payerPhone": payerPhone,
@@ -87,7 +87,7 @@ class RemitaDirectDebit extends RemitaHandler {
       {required String requestId, required String mandateId}) async {
     List<String> hashableString = [merchantID, apiKey, requestId];
     String apiAttachment =
-        '/mandate/form/$merchantID/${returnHash(hashableString)}/$mandateId/$requestId/rest.reg';
+        '/mandate/form/$merchantID/${Encryption.sha512Encrypt(hashableString)}/$mandateId/$requestId/rest.reg';
     String api = RemitaAPI(demo).directDebitGetBase + apiAttachment;
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ class RemitaDirectDebit extends RemitaHandler {
       'API_KEY': apiKey,
       'REQUEST_ID': requestId,
       'REQUEST_TS': requestTS(),
-      'API_DETAILS_HASH': returnHash(hashableString),
+      'API_DETAILS_HASH': Encryption.sha512Encrypt(hashableString),
     };
 
     Map<String, dynamic> body = {
@@ -159,7 +159,7 @@ class RemitaDirectDebit extends RemitaHandler {
       'API_KEY': apiKey,
       'REQUEST_ID': requestId,
       'REQUEST_TS': requestTS(),
-      'API_DETAILS_HASH': returnHash(hashableString)
+      'API_DETAILS_HASH': Encryption.sha512Encrypt(hashableString)
     };
 
     Map<String, dynamic> body = {
@@ -186,7 +186,7 @@ class RemitaDirectDebit extends RemitaHandler {
     Map<String, dynamic> body = {
       "merchantId": merchantID,
       "mandateId": mandateId,
-      "hash": returnHash(hashableString),
+      "hash": Encryption.sha512Encrypt(hashableString),
       "requestId": requestId
     };
 
@@ -206,7 +206,7 @@ class RemitaDirectDebit extends RemitaHandler {
     Map<String, dynamic> body = {
       "merchantId": merchantID,
       "mandateId": mandateId,
-      "hash": returnHash(hashableString),
+      "hash": Encryption.sha512Encrypt(hashableString),
       "requestId": requestId
     };
     Map<String, String> headers = {
@@ -226,7 +226,7 @@ class RemitaDirectDebit extends RemitaHandler {
     List<String> hashableString = [mandateId, merchantID, requestId, apiKey];
     Map<String, dynamic> body = {
       "merchantId": merchantID,
-      "hash": returnHash(hashableString),
+      "hash": Encryption.sha512Encrypt(hashableString),
       "mandateId": mandateId,
       "requestId": requestId
     };
@@ -260,7 +260,7 @@ class RemitaDirectDebit extends RemitaHandler {
     Map<String, dynamic> body = {
       "merchantId": merchantID,
       "serviceTypeId": serviceId,
-      "hash": returnHash(hashableString),
+      "hash": Encryption.sha512Encrypt(hashableString),
       "requestId": requestId,
       "totalAmount": debitAmount,
       "mandateId": mandateId,
@@ -283,7 +283,7 @@ class RemitaDirectDebit extends RemitaHandler {
     Map<String, dynamic> body = {
       "merchantId": merchantID,
       "mandateId": mandateId,
-      "hash": returnHash(hashableString),
+      "hash": Encryption.sha512Encrypt(hashableString),
       "requestId": requestId
     };
     return RemitaStatusResponse.fromJson(
@@ -312,7 +312,7 @@ class RemitaDirectDebit extends RemitaHandler {
     Map<String, dynamic> body = {
       "merchantId": merchantID,
       "mandateId": mandateId,
-      "hash": returnHash(hashableString),
+      "hash": Encryption.sha512Encrypt(hashableString),
       "transactionRef": transactionRef.toString(),
       "requestId": requestId
     };

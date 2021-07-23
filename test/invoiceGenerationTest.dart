@@ -97,7 +97,6 @@ invoiceGenerationTest() {
     test('Check RRR Transaction Status Using RRR', () async {
       RemitaStatusResponse remitaStatusResponse =
           await remitaInvoiceGeneration.checkTransactionStatus(rrr: rrr);
-      print(remitaStatusResponse.toString());
 
       expect(remitaStatusResponse.status, '021');
       expect(remitaStatusResponse.message, 'Transaction Pending');

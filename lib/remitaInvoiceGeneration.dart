@@ -59,7 +59,7 @@ class RemitaInvoiceGeneration extends RemitaHandler {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization':
-          'remitaConsumerKey=$merchantID,remitaConsumerToken=${returnHash(hashableString)}'
+          'remitaConsumerKey=$merchantID,remitaConsumerToken=${Encryption.sha512Encrypt(hashableString)}'
     };
     String apiAttachment = '/echannelsvc/merchant/api/paymentinit';
 
@@ -80,12 +80,12 @@ class RemitaInvoiceGeneration extends RemitaHandler {
     ///The attachement to be added to the tail end of the base Url when checking
     ///transaction status using OrderID
     String apiAttachmentRRR =
-        '/$merchantID/$rrr/${returnHash(hashableString)}/status.reg';
+        '/$merchantID/$rrr/${Encryption.sha512Encrypt(hashableString)}/status.reg';
 
     ///The attachement to be added to the tail end of the base Url when checking
     ///transaction status using RRR
     String apiAttachmentOrderID =
-        '/echannelsvc/$merchantID/$orderID/${returnHash(hashableString)}/orderstatus.reg';
+        '/echannelsvc/$merchantID/$orderID/${Encryption.sha512Encrypt(hashableString)}/orderstatus.reg';
 
     ///Combining the baseUrl and the api Attachment
     String api = RemitaAPI(demo).directDebitGetBase +
@@ -94,7 +94,7 @@ class RemitaInvoiceGeneration extends RemitaHandler {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization':
-          'remitaConsumerKey=$merchantID,remitaConsumerToken=${returnHash(hashableString)}'
+          'remitaConsumerKey=$merchantID,remitaConsumerToken=${Encryption.sha512Encrypt(hashableString)}'
     };
     return RemitaStatusResponse.fromJson(await GenericHttp.getFromDB(
         api: api, apiKey: apiKey, headers: headers));

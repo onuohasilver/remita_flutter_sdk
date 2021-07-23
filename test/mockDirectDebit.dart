@@ -25,7 +25,5 @@ class MockDirectDebit {
 
   static String requestId = getRandomString(12);
   static List<String> hashableString = [apiKey, requestId, apiToken];
-  var apiHash = returnHash(hashableString);
+  var apiHash = Encryption.sha512Encrypt(hashableString);
 }
-
-
