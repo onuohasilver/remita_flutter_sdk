@@ -6,9 +6,7 @@ aesEncryptionTest() {
     String encryption = Encryption(
       encodeKey: 'abcd1234abcd1234',
       encodeIv: '1234abcd1234abcd',
-    ).aesEncrypt(
-      plainText: 'GoldFish',
-    );
+    ).aesEncrypt('GoldFish');
     expect(encryption, 'ecNjMcZ7Csy7VE9wTPcZ+w==');
   });
 }

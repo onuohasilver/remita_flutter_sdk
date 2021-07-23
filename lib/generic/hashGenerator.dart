@@ -21,9 +21,9 @@ class Encryption {
     return hashedString;
   }
 
-  String aesEncrypt({
-    required String plainText,
-  }) {
+  String aesEncrypt(
+    String plainText,
+  ) {
     final key = Key.fromUtf8(encodeKey!);
     final iv = IV.fromUtf8(encodeIv!);
 

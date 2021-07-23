@@ -8,11 +8,11 @@ import 'invoiceGenerationTest.dart';
 
 void main() {
   group('Remita Flutter SDK Tests', () {
-    // customFieldTest();
-    // dateConverterTest();
-    // beneficiaryFieldTest();
-    // aesEncryptionTest();
+    customFieldTest();
+    dateConverterTest();
+    beneficiaryFieldTest();
+    aesEncryptionTest();
     invoiceGenerationTest();
-    // sequenceADirectDebit();
+    sequenceADirectDebit();
   });
 }
