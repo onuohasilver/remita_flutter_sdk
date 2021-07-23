@@ -79,12 +79,12 @@ class RemitaInvoiceGeneration extends RemitaHandler {
 
     ///The attachement to be added to the tail end of the base Url when checking
     ///transaction status using OrderID
-    String apiAttachmentOrderID =
+    String apiAttachmentRRR =
         '/$merchantID/$rrr/${returnHash(hashableString)}/status.reg';
 
     ///The attachement to be added to the tail end of the base Url when checking
     ///transaction status using RRR
-    String apiAttachmentRRR =
+    String apiAttachmentOrderID =
         '/echannelsvc/$merchantID/$orderID/${returnHash(hashableString)}/orderstatus.reg';
 
     ///Combining the baseUrl and the api Attachment
