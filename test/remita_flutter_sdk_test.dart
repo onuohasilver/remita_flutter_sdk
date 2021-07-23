@@ -1,22 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:remita_flutter_sdk/generic/dateConverter.dart';
-import 'package:remita_flutter_sdk/generic/genericTypes/beneficiary.dart';
-import 'package:remita_flutter_sdk/generic/genericTypes/customFields.dart';
-import 'package:remita_flutter_sdk/responseObjects/chargeObject.dart';
-
+import 'aesEncryptionTest.dart';
 import 'beneficiaryFieldTest.dart';
 import 'customFieldTest.dart';
 import 'dateConverterTest.dart';
 import 'directDebitTest.dart';
 import 'invoiceGenerationTest.dart';
-import 'mockApi.dart';
 
 void main() {
-  group('description', () {
-    createTestRRR();
-    customFieldTest();
-    dateConverterTest();
-    beneficiaryFieldTest();
-    sequenceADirectDebit();
+  group('Remita Flutter SDK Tests', () {
+    // customFieldTest();
+    // dateConverterTest();
+    // beneficiaryFieldTest();
+    // aesEncryptionTest();
+    invoiceGenerationTest();
+    // sequenceADirectDebit();
   });
 }

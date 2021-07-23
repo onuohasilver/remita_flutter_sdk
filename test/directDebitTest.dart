@@ -4,14 +4,14 @@ import 'package:remita_flutter_sdk/responseObjects/mandateHistoryObject.dart';
 import 'package:remita_flutter_sdk/responseObjects/mandateStatus.dart';
 import 'package:remita_flutter_sdk/responseObjects/statusObject.dart';
 
-import 'mockRemitaData.dart';
+import 'mockDirectDebit.dart';
 
 sequenceADirectDebit() {
   RemitaDirectDebit remitaDirectDebit = RemitaDirectDebit(
       merchantID: MockDirectDebit.merchantId, apiKey: MockDirectDebit.apiKey);
 
   group('Sequence A Direct Debit', () {
-    late String mandateId, requestId;
+    late String mandateId, requestId, transactionRef;
 
     test('Generate A Mandate', () async {
       RemitaStatusResponse remitaStatusResponse =
@@ -92,9 +92,49 @@ sequenceADirectDebit() {
       expect(mandateHistoryObject.mandateId, mandateId);
     });
 
+    test('Send Debit Instruction', () async {
+      RemitaStatusResponse remitaStatusResponse =
+          await remitaDirectDebit.sendDebitInstruction(
+              serviceId: MockDirectDebit.serviceTypeId,
+              requestId: requestId,
+              debitAmount: MockDirectDebit.amount,
+              mandateId: mandateId,
+              payerAccount: MockDirectDebit.payerAccount,
+              payerBankCode: MockDirectDebit.payerBankCode);
+      expect(remitaStatusResponse.statuscode, '061');
+      expect(remitaStatusResponse.status, 'Mandate Not Activated');
+    });
+
+    ///TODO: Clarify if tests are only passed when the mandate is activated
+    ///FIXME: Test fails with non activated Mandates
+
+    test('Check Debit Instruction Status', () async {
+      RemitaStatusResponse remitaStatusResponse =
+          await remitaDirectDebit.debitInstructionStatus(
+              mandateId: '140007735469', requestId: '1551782788673');
+
+      expect(remitaStatusResponse.statuscode, '072');
+      expect(remitaStatusResponse.status, 'Pending Credit');
+      expect(remitaStatusResponse.transactionRef != null, true);
+      transactionRef = remitaStatusResponse.transactionRef!.toString();
+    });
+
+    test('Cancel Debit Instruction', () async {
+      RemitaStatusResponse remitaStatusResponse =
+          await remitaDirectDebit.cancelDebitInstruction(
+              mandateId: '200007681305',
+              transactionRef: '7681307',
+              requestId: '1524034885236');
+      // print(remitaStatusResponse.toString());
+      expect(remitaStatusResponse.requestId, '1524034885236');
+      expect(remitaStatusResponse.mandateId, '200007681305');
+      expect(remitaStatusResponse.statuscode, '02');
+    });
+
     test('Stop Mandate', () async {
       RemitaStatusResponse remitaStatusResponse = await remitaDirectDebit
           .stopMandate(mandateId: mandateId, requestId: requestId);
+
       expect(remitaStatusResponse.statuscode, '00');
       expect(remitaStatusResponse.requestId, requestId);
       expect(remitaStatusResponse.mandateId, mandateId);

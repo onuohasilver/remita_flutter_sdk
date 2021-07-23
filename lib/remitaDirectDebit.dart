@@ -236,4 +236,87 @@ class RemitaDirectDebit extends RemitaHandler {
     return RemitaStatusResponse.fromJson(
         await GenericHttp.postToDB(api: api, body: body, headers: headers));
   }
+
+  Future<RemitaStatusResponse> sendDebitInstruction(
+      {required String serviceId,
+      required String requestId,
+      required String debitAmount,
+      required String mandateId,
+      required String payerAccount,
+      required String payerBankCode}) async {
+    String apiAttachment = '/echannelsvc/echannel/mandate/payment/send';
+    String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+
+    List<String> hashableString = [
+      merchantID,
+      serviceId,
+      requestId,
+      debitAmount,
+      apiKey
+    ];
+    Map<String, dynamic> body = {
+      "merchantId": merchantID,
+      "serviceTypeId": serviceId,
+      "hash": returnHash(hashableString),
+      "requestId": requestId,
+      "totalAmount": debitAmount,
+      "mandateId": mandateId,
+      "fundingAccount": payerAccount,
+      "fundingBankCode": payerBankCode
+    };
+
+    return RemitaStatusResponse.fromJson(
+        await GenericHttp.postToDB(api: api, body: body, headers: headers));
+  }
+
+  Future<RemitaStatusResponse> debitInstructionStatus(
+      {required String mandateId, required String requestId}) async {
+    String apiAttachment = '/echannelsvc/echannel/mandate/payment/status';
+    String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+    List<String> hashableString = [mandateId, merchantID, requestId, apiKey];
+    Map<String, dynamic> body = {
+      "merchantId": merchantID,
+      "mandateId": mandateId,
+      "hash": returnHash(hashableString),
+      "requestId": requestId
+    };
+    return RemitaStatusResponse.fromJson(
+        await GenericHttp.postToDB(api: api, body: body, headers: headers));
+  }
+
+  ///  This enables you to cancel a particular debit instruction that has been sent.
+  ///  This will only be possible where debit has not happened yet.
+  Future<RemitaStatusResponse> cancelDebitInstruction(
+      {required String mandateId,
+      required String transactionRef,
+      required String requestId}) async {
+    String apiAttachment = '/echannelsvc/echannel/mandate/payment/stop';
+    String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+
+    List<String> hashableString = [
+      transactionRef,
+      merchantID,
+      requestId,
+      apiKey
+    ];
+
+    Map<String, dynamic> body = {
+      "merchantId": merchantID,
+      "mandateId": mandateId,
+      "hash": returnHash(hashableString),
+      "transactionRef": transactionRef.toString(),
+      "requestId": requestId
+    };
+    return RemitaStatusResponse.fromJson(
+        await GenericHttp.postToDB(api: api, body: body, headers: headers));
+  }
 }
