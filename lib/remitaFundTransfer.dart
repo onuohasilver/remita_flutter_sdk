@@ -63,4 +63,27 @@ class RemitaFundTransfer extends RemitaHandler {
     return FundTransferResponse.fromJson(
         await GenericHttp.postToDB(api: api, body: body, headers: headers));
   }
+
+  ///This  enables you to make an inquiry on the status of a transaction
+  ///that was processed via the Single Transfer API.
+  querySingleTransfer(
+      {required String transRef, required String requestId}) async {
+    String apiAttachment = '/rpgsvc/rpg/api/v2/merc/payment/status';
+    String api = RemitaAPI(demo).invoiceGenerationBase + apiAttachment;
+    Encryption encryption =
+        Encryption(encodeIv: encodeIv, encodeKey: encodeKey);
+    List<String> hashableString = [apiKey, requestId, apiToken];
+    Map<String, dynamic> body = {'transRef': encryption.aesEncrypt(transRef)};
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'MERCHANT_ID': merchantID,
+      'API_KEY': apiKey,
+      'REQUEST_ID': requestId,
+      'REQUEST_TS': requestTS(),
+      'API_DETAILS_HASH': Encryption.sha512Encrypt(hashableString)
+    };
+    return FundTransferResponse.fromJson(
+        await GenericHttp.postToDB(api: api, body: body, headers: headers));
+  }
 }
