@@ -17,7 +17,7 @@ class RemitaAPI {
   /// that will enable you collect payments recurrently
   get directDebitPostBase => demo
       ? 'https://remitademo.net/remita/exapp/api/v1/send/api'
-      : 'https://login.remita.net/remita/exapp/api/v1/send/api/echannelsvc/echannel';
+      : 'https://login.remita.net/remita/exapp/api/v1/send/api';
 
   /// The base URL for the live and demo direct debit Get requests
   get directDebitGetBase => demo

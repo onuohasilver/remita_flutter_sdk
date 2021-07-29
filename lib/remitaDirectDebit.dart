@@ -24,7 +24,6 @@ class RemitaDirectDebit extends RemitaHandler {
   /// (Format: DD/MM/YYYY)
   Future<RemitaStatusResponse> generateMandate(
       {required String serviceID,
-      required String requestId,
       required String amount,
       required String payerName,
       required String payerEmail,
@@ -33,6 +32,7 @@ class RemitaDirectDebit extends RemitaHandler {
       required String payerAccount,
       required DateTime startDate,
       required DateTime endDate,
+      required String requestId,
       required String mandateType,
       required String maxNoOfDebits,
       List<CustomField>? customField}) async {
@@ -84,7 +84,7 @@ class RemitaDirectDebit extends RemitaHandler {
   ///for activation before you are able to issue
   ///direct debit instructions on the mandate successfully.
   Future<Uri> printMandate(
-      {required String requestId, required String mandateId}) async {
+      {required String mandateId, required String requestId}) async {
     List<String> hashableString = [merchantID, apiKey, requestId];
     String apiAttachment =
         '/mandate/form/$merchantID/${Encryption.sha512Encrypt(hashableString)}/$mandateId/$requestId/rest.reg';
@@ -102,8 +102,8 @@ class RemitaDirectDebit extends RemitaHandler {
 
   Future<RemitaStatusResponse> mandateOTPrequest({
     required String apiToken,
-    required String requestId,
     required String mandateId,
+    required String requestId,
   }) async {
     List<String> hashableString = [apiKey, requestId, apiToken];
 
@@ -118,7 +118,7 @@ class RemitaDirectDebit extends RemitaHandler {
 
     Map<String, dynamic> body = {
       "mandateId": mandateId,
-      "requestId": requestId
+      "requestId": requestId,
     };
     String api =
         'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/echannel/mandate/requestAuthorization';
@@ -137,8 +137,7 @@ class RemitaDirectDebit extends RemitaHandler {
   ///bank to send their requirements for automated mandate activation.
 
   Future<RemitaStatusResponse> mandateOTPactivate(
-      {required String requestId,
-      required String remitaTransferRef,
+      {required String remitaTransferRef,
       required String otp,
       required String card,
       required String apiToken}) async {
@@ -148,7 +147,7 @@ class RemitaDirectDebit extends RemitaHandler {
 
     List<String> hashableString = [
       apiKey,
-      requestId,
+      DateTime.now().microsecondsSinceEpoch.toString(),
       apiToken,
     ];
 
@@ -157,7 +156,7 @@ class RemitaDirectDebit extends RemitaHandler {
       'Content-Type': 'application/json',
       'MERCHANT_ID': merchantID,
       'API_KEY': apiKey,
-      'REQUEST_ID': requestId,
+      'REQUEST_ID': DateTime.now().microsecondsSinceEpoch.toString(),
       'REQUEST_TS': requestTS(),
       'API_DETAILS_HASH': Encryption.sha512Encrypt(hashableString)
     };
@@ -177,7 +176,7 @@ class RemitaDirectDebit extends RemitaHandler {
   }
 
   Future<RemitaMandateStatus> checkMandateStatus(
-      {required String requestId, required String mandateId}) async {
+      {required String mandateId, required String requestId}) async {
     List<String> hashableString = [mandateId, merchantID, requestId, apiKey];
     String apiAttachment = '/echannelsvc/echannel/mandate/status';
     Map<String, String> headers = {
@@ -187,7 +186,7 @@ class RemitaDirectDebit extends RemitaHandler {
       "merchantId": merchantID,
       "mandateId": mandateId,
       "hash": Encryption.sha512Encrypt(hashableString),
-      "requestId": requestId
+      "requestId": requestId,
     };
 
     String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
@@ -196,10 +195,8 @@ class RemitaDirectDebit extends RemitaHandler {
   }
 
   ///This  allows you retrieve the history of a direct debit agreement and all debits that have been made.
-  Future<MandateHistoryObject> mandatePaymentHistory({
-    required String mandateId,
-    required String requestId,
-  }) async {
+  Future<MandateHistoryObject> mandatePaymentHistory(
+      {required String mandateId, required String requestId}) async {
     String apiAttachment = '/echannelsvc/echannel/mandate/payment/history';
     String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
     List<String> hashableString = [mandateId, merchantID, requestId, apiKey];
@@ -219,16 +216,20 @@ class RemitaDirectDebit extends RemitaHandler {
   ///This allows you to stop a mandate.
   Future<RemitaStatusResponse> stopMandate({
     required String mandateId,
-    required String requestId,
   }) async {
     String apiAttachment = '/echannelsvc/echannel/mandate/stop';
     String api = RemitaAPI(demo).directDebitPostBase + apiAttachment;
-    List<String> hashableString = [mandateId, merchantID, requestId, apiKey];
+    List<String> hashableString = [
+      mandateId,
+      merchantID,
+      DateTime.now().microsecondsSinceEpoch.toString(),
+      apiKey
+    ];
     Map<String, dynamic> body = {
       "merchantId": merchantID,
       "hash": Encryption.sha512Encrypt(hashableString),
       "mandateId": mandateId,
-      "requestId": requestId
+      "requestId": DateTime.now().microsecondsSinceEpoch.toString(),
     };
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -239,9 +240,9 @@ class RemitaDirectDebit extends RemitaHandler {
 
   Future<RemitaStatusResponse> sendDebitInstruction(
       {required String serviceId,
-      required String requestId,
       required String debitAmount,
       required String mandateId,
+      required String requestId,
       required String payerAccount,
       required String payerBankCode}) async {
     String apiAttachment = '/echannelsvc/echannel/mandate/payment/send';
@@ -284,7 +285,7 @@ class RemitaDirectDebit extends RemitaHandler {
       "merchantId": merchantID,
       "mandateId": mandateId,
       "hash": Encryption.sha512Encrypt(hashableString),
-      "requestId": requestId
+      "requestId": requestId,
     };
     return RemitaStatusResponse.fromJson(
         await GenericHttp.postToDB(api: api, body: body, headers: headers));
@@ -314,7 +315,7 @@ class RemitaDirectDebit extends RemitaHandler {
       "mandateId": mandateId,
       "hash": Encryption.sha512Encrypt(hashableString),
       "transactionRef": transactionRef.toString(),
-      "requestId": requestId
+      "requestId": requestId,
     };
     return RemitaStatusResponse.fromJson(
         await GenericHttp.postToDB(api: api, body: body, headers: headers));

@@ -7,11 +7,12 @@ class RemitaStatusResponse extends RemitaResponse {
   final List? authParams;
   final int? transactionRef;
   final String? amount;
-  final String? status, statuscode;
+  final String? status, statuscode, remitaTransRef;
   final DateTime? lastStatusUpdateTime, transactionTime;
 
   RemitaStatusResponse(
       {required this.amount,
+      required this.remitaTransRef,
       required this.lastStatusUpdateTime,
       required this.rrr,
       required this.requestId,
@@ -33,6 +34,7 @@ class RemitaStatusResponse extends RemitaResponse {
         transactionRef: json['transactionRef'],
         authParams: json['authParams'],
         orderID: json['orderId'],
+        remitaTransRef: json['remitaTransRef'],
         rrr: json['RRR'],
         statuscode: json['statuscode'],
         status: json['status'],
@@ -50,6 +52,7 @@ class RemitaStatusResponse extends RemitaResponse {
       'message': message,
       'lastStatusUpdateTime': lastStatusUpdateTime,
       'transactionRef': transactionRef,
+      'Remita trans Ref': remitaTransRef,
       'authParams': authParams,
       'orderID': orderID,
       'rrr': rrr,

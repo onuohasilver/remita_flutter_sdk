@@ -11,19 +11,19 @@ class MockDirectDebit {
 
   static String remitaTransRef = "1587568766736";
   static String payerName = 'ADEYEMI JAMES';
-  static String payerEmail = 'segunakomolafe5@gmail.com';
-  static String payerPhone = '08012345678';
+  static String payerEmail = 'alozie@systemspecs.com.ng';
+  static String payerPhone = '2345089765645';
   static String payerBankCode = '057';
   static String serviceTypeId = '35126630';
   static String payerAccount = '1234890001';
-  static String amount = '1000.00';
+  static String amount = '1000';
   static String mandateType = 'DD';
-  static DateTime endDate = DateTime(2021, 12, 30);
-  static DateTime startDate = DateTime(2021, 01, 27);
+  static DateTime endDate = DateTime(2022, 12, 23);
+  static DateTime startDate = DateTime(2021, 07, 28);
 
   static String maxNoOfDebits = '3';
 
-  static String requestId = getRandomString(12);
+  static String requestId = DateTime.now().microsecondsSinceEpoch.toString();
   static List<String> hashableString = [apiKey, requestId, apiToken];
-  var apiHash = Encryption.sha512Encrypt(hashableString);
+  static String apiHash = Encryption.sha512Encrypt(hashableString);
 }
